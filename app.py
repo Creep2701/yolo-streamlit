@@ -168,7 +168,7 @@ def main():
                 st.error(f"An error occurred when displaying the image: {e}")
 
     
-    debug_image_path = "debug_processed_image.jpg"
+    debug_image_path = "/mount/src/yolo-streamlit/debug_processed_image.jpg"
     if os.path.exists(debug_image_path):
         debug_image = Image.open(debug_image_path)
         st.image(debug_image, caption='Debug Image', use_column_width=True)
