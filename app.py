@@ -161,9 +161,31 @@ def main():
         # Run the pipeline
         processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
+        print("Processed image type after processing:", type(processed_image))
         if isinstance(processed_image, np.ndarray):
-            # Convert NumPy array to PIL Image
+            print("Processed image shape:", processed_image.shape)
             processed_image = Image.fromarray(processed_image)
+
+        elif isinstance(processed_image, Image.Image):
+            print("Processed PIL image size:", processed_image.size)
+        
+        if processed_image is not None:
+            print("Processed image type after processing:", type(processed_image))
+            if isinstance(processed_image, np.ndarray):
+                print("Processed image shape:", processed_image.shape)
+                processed_image = Image.fromarray(processed_image)
+            elif isinstance(processed_image, Image.Image):
+                print("Processed PIL image size:", processed_image.size)
+            
+            # Save for debugging
+            processed_image.save("debug_processed_image.jpg")
+
+            # Display the processed image
+            try:
+                st.image(processed_image, caption='Processed Image', use_column_width=True)
+            except Exception as e:
+                st.error(f"An error occurred when displaying the image: {e}"
+
 
     # Display the processed image
     if processed_image is not None:
