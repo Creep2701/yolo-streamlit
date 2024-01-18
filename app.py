@@ -8,7 +8,7 @@ import cv2
 import streamlit as st
 import requests
 from io import BytesIO
-import os
+
 
 
 def apply_elliptical_mask(image_path):
@@ -134,14 +134,6 @@ def load_image_from_url(url):
         st.error("An error occurred: " + str(e))
         return None
 
-
-def save_uploaded_file(uploaded_file):
-    try:
-        with open(os.path.join("tempDir",uploaded_file.name),"wb") as f:
-            f.write(uploaded_file.getbuffer())
-        return os.path.join("tempDir",uploaded_file.name)
-    except Exception as e:
-        return None
 
 # ... (previous code)
 
