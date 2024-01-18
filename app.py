@@ -70,7 +70,7 @@ def preprocess_and_predict(image_path, detection_model_path, segmentation_model_
 
         # Apply the elliptical mask to preprocess the image
         preprocessed_image = apply_elliptical_mask(image_path)
-        preprocessed_image_path = 'temp_preprocessed.jpg'
+        preprocessed_image_path = 'temp_preprocessed.png'
         cv2.imwrite(preprocessed_image_path, preprocessed_image)
 
         # Load the YOLO model for object detection
