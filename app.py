@@ -153,7 +153,11 @@ def main():
     if option == 'Upload':
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
         if uploaded_file is not None:
-            image_path = st.image(uploaded_file, caption='Loaded Image', use_column_width=True)
+            # Open and convert the uploaded image to JPEG format
+            pil_image = Image.open(uploaded_file)
+            image_path = "temp_image.jpg"
+            pil_image.save(image_path, "JPEG")
+            st.image(pil_image, caption='Loaded Image', use_column_width=True)
 
     elif option == 'URL':
         url = st.text_input("Enter the URL of the image")
