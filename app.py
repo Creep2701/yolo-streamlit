@@ -150,36 +150,33 @@ def main():
 
     # Image upload or URL input
     option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
-    image_path = None
+    image = None
 
     if option == 'Upload':
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
         if uploaded_file is not None:
-            # Save the uploaded image to a temporary file
-            image_path = save_uploaded_file(uploaded_file)
+            # Load the uploaded image
+            image = Image.open(uploaded_file)
 
     elif option == 'URL':
         url = st.text_input("Enter the URL of the image")
         if url:
             image = load_image_from_url(url)
             if image:
-                # Save the loaded image to a temporary file
-                image_path = "temp_image.jpg"
-                image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
     # "Run Model" button
-    if st.button("Run Model") and image_path:
+    if st.button("Run Model") and image:
+        # Convert the image to a NumPy array
+        image_np = np.array(image)
+
+        # Perform preprocessing and prediction
         segmentation_model_path = 'best-segmentation-m.pt'
         detection_model_path = 'best-detection-xl.pt'
-        processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
-
-        if isinstance(processed_image, np.ndarray):
-            processed_image = Image.fromarray(processed_image)
+        processed_image = preprocess_and_predict(image_np, detection_model_path, segmentation_model_path)
 
         if processed_image is not None:
             try:
-                processed_image.save("debug_processed_image.jpg")
                 st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
