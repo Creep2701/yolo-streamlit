@@ -165,7 +165,7 @@ def main():
         st.image(processed_image, caption='Processed Image', use_column_width=True)
     
     if isinstance(processed_image, np.ndarray):
-    processed_image = Image.fromarray(processed_image)
+        processed_image = Image.fromarray(processed_image)
 
     # Debugging: Print type and size of the processed image
     print("Processed image type:", type(processed_image))
