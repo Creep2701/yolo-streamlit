@@ -153,9 +153,7 @@ def main():
     if option == 'Upload':
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
         if uploaded_file is not None:
-            image_path = "temp_image.jpg"
-            image = Image.open(uploaded_file)
-            st.image(image, caption='Loaded Image', use_column_width=True)
+            image_path = save_uploaded_file(uploaded_file)
 
     elif option == 'URL':
         url = st.text_input("Enter the URL of the image")
@@ -166,8 +164,9 @@ def main():
                 image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
-    # "Run Model" button
-    if st.button("Run Model") and image_path:
+    # Image Processing and Visualization
+    processed_image = None
+    if image_path:
         segmentation_model_path = 'best-segmentation-m.pt'
         detection_model_path = 'best-detection-xl.pt'
         processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
@@ -183,7 +182,7 @@ def main():
                 st.error(f"An error occurred when displaying the image: {e}")
 
 
-
+    
 if __name__ == "__main__":
     main()
 
