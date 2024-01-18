@@ -70,7 +70,7 @@ def preprocess_and_predict(image_path, detection_model_path, segmentation_model_
 
         # Apply the elliptical mask to preprocess the image
         preprocessed_image = apply_elliptical_mask(image_path)
-        preprocessed_image_path = 'temp_preprocessed.jpg'
+        preprocessed_image_path = 'temp_preprocessed.png'
         cv2.imwrite(preprocessed_image_path, preprocessed_image)
 
         # Load the YOLO model for object detection
@@ -160,7 +160,7 @@ def main():
         if url:
             image = load_image_from_url(url)
             if image:
-                image_path = "temp_image.jpg"
+                image_path = "temp_image.png"
                 image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
@@ -176,7 +176,7 @@ def main():
 
         if processed_image is not None:
             try:
-                processed_image.save("debug_processed_image.jpg")
+                processed_image.save("debug_processed_image.png")
                 st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
@@ -187,7 +187,7 @@ def main():
     else:
         st.error("Image path is not valid")
     
-    debug_image_path = "/mount/src/yolo-streamlit/debug_processed_image.jpg"
+    debug_image_path = "/mount/src/yolo-streamlit/debug_processed_image.png"
     if os.path.exists(debug_image_path):
         debug_image = Image.open(debug_image_path)
         st.image(debug_image, caption='Debug Image', use_column_width=True)
