@@ -142,7 +142,6 @@ def save_uploaded_file(uploaded_file):
         return os.path.join("tempDir",uploaded_file.name)
     except Exception as e:
         return None
-
 def main():
     st.title("YOLO Image Processing App")
 
@@ -160,7 +159,7 @@ def main():
         if url:
             image = load_image_from_url(url)
             if image:
-                image_path = "temp_image.jpg"
+                image_path = 'temp_image.jpg'  # Update the image_path for URL case
                 image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
@@ -180,8 +179,11 @@ def main():
                 # Convert the processed image to RGB mode
                 processed_image_rgb = processed_image.convert("RGB")
 
-                # Save the RGB image as PNG
-                processed_image_rgb.save(image_path, format="PNG")
+                # Define the new image path with the correct file extension (e.g., PNG)
+                image_path_with_extension = image_path.replace(".jpg", ".png")
+
+                # Save the RGB image with the correct file extension
+                processed_image_rgb.save(image_path_with_extension)
 
                 st.image(processed_image_rgb, caption='Processed Image', use_column_width=True)
             except Exception as e:
