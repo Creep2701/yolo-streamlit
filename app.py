@@ -174,12 +174,19 @@ def main():
         if isinstance(processed_image, np.ndarray):
             processed_image = Image.fromarray(processed_image)
 
+        # After processing the image
         if processed_image is not None:
             try:
-                processed_image.save("debug_processed_image.jpg")
-                st.image(processed_image, caption='Processed Image', use_column_width=True)
+                # Convert the processed image to RGB mode
+                processed_image_rgb = processed_image.convert("RGB")
+
+                # Save the RGB image as JPEG
+                processed_image_rgb.save(image_path, "JPEG")
+
+                st.image(processed_image_rgb, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
+
 
 
     
