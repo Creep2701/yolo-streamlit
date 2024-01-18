@@ -165,6 +165,13 @@ def main():
                 st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
+    
+    debug_image_path = "debug_processed_image.jpg"
+    if os.path.exists(debug_image_path):
+        debug_image = Image.open(debug_image_path)
+        st.image(debug_image, caption='Debug Image', use_column_width=True)
+    else:
+        st.error("Debug image not found.")
 
 if __name__ == "__main__":
     main()
