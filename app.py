@@ -70,7 +70,7 @@ def preprocess_and_predict(image_path, detection_model_path, segmentation_model_
 
         # Apply the elliptical mask to preprocess the image
         preprocessed_image = apply_elliptical_mask(image_path)
-        preprocessed_image_path = 'temp_preprocessed.png'
+        preprocessed_image_path = 'temp_preprocessed.jpg'
         cv2.imwrite(preprocessed_image_path, preprocessed_image)
 
         # Load the YOLO model for object detection
@@ -142,6 +142,7 @@ def save_uploaded_file(uploaded_file):
         return os.path.join("tempDir",uploaded_file.name)
     except Exception as e:
         return None
+
 def main():
     st.title("YOLO Image Processing App")
 
@@ -159,7 +160,7 @@ def main():
         if url:
             image = load_image_from_url(url)
             if image:
-                image_path = 'temp_image.jpg'  # Update the image_path for URL case
+                image_path = "temp_image.jpg"
                 image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
@@ -173,21 +174,26 @@ def main():
         if isinstance(processed_image, np.ndarray):
             processed_image = Image.fromarray(processed_image)
 
-        # After processing the image
         if processed_image is not None:
             try:
-                # Convert the processed image to RGB mode
-                processed_image_rgb = processed_image.convert("RGB")
-
-                # Define the new image path with the correct file extension (e.g., PNG)
-                image_path_with_extension = image_path.replace(".jpg", ".png")
-
-                # Save the RGB image with the correct file extension
-                processed_image_rgb.save(image_path_with_extension)
-
-                st.image(processed_image_rgb, caption='Processed Image', use_column_width=True)
+                processed_image.save("debug_processed_image.jpg")
+                st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
+        else:
+            st.error("Processed image is None")
+        # Debug print using st.write()
+        st.write("Debug: Processed image shape:", processed_image.shape if processed_image is not None else "N/A")
+    else:
+        st.error("Image path is not valid")
+    
+    debug_image_path = "/mount/src/yolo-streamlit/debug_processed_image.jpg"
+    if os.path.exists(debug_image_path):
+        debug_image = Image.open(debug_image_path)
+        st.image(debug_image, caption='Debug Image', use_column_width=True)
+    else:
+        st.error("Debug image not found.")
 
 if __name__ == "__main__":
     main()
+
