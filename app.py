@@ -156,6 +156,7 @@ def main():
         segmentation_model_path = 'best-segmentation-m.pt'
         detection_model_path = 'best-detection-xl.pt'
         processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
+        print(processed_image.format)
         st.image(processed_image, caption='Processed Image', use_column_width=True)
         if isinstance(processed_image, np.ndarray):
             processed_image = Image.fromarray(processed_image)
