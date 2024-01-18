@@ -8,7 +8,7 @@ import cv2
 import streamlit as st
 import requests
 from io import BytesIO
-
+import os
 
 
 def apply_elliptical_mask(image_path):
@@ -135,45 +135,53 @@ def load_image_from_url(url):
         return None
 
 
-# ... (previous code)
+def save_uploaded_file(uploaded_file):
+    try:
+        with open(os.path.join("tempDir",uploaded_file.name),"wb") as f:
+            f.write(uploaded_file.getbuffer())
+        return os.path.join("tempDir",uploaded_file.name)
+    except Exception as e:
+        return None
 
 def main():
     st.title("YOLO Image Processing App")
 
     # Image upload or URL input
     option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
-    image = None
+    image_path = None
 
     if option == 'Upload':
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
         if uploaded_file is not None:
-            # Load the uploaded image
-            image = Image.open(uploaded_file)
+            image_path = save_uploaded_file(uploaded_file)
 
     elif option == 'URL':
         url = st.text_input("Enter the URL of the image")
         if url:
             image = load_image_from_url(url)
             if image:
+                image_path = "temp_image.jpg"
+                image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
     # "Run Model" button
-    if st.button("Run Model") and image:
-        # Convert the image to a NumPy array
-        image_np = np.array(image)
-
-        # Perform preprocessing and prediction
+    if st.button("Run Model") and image_path:
         segmentation_model_path = 'best-segmentation-m.pt'
         detection_model_path = 'best-detection-xl.pt'
-        processed_image = preprocess_and_predict(image_np, detection_model_path, segmentation_model_path)
+        processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
+
+        if isinstance(processed_image, np.ndarray):
+            processed_image = Image.fromarray(processed_image)
 
         if processed_image is not None:
             try:
+                processed_image.save("debug_processed_image.jpg")
                 st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
 
+
+
 if __name__ == "__main__":
     main()
-
 
