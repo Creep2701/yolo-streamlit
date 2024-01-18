@@ -152,30 +152,25 @@ def main():
     # Descriptions and User Inputs  
     # (Add any additional inputs or descriptions here)
 
-    # Image Processing and Visualization
+    processed_image = None
     if image_path:
         # Paths to your models (ensure these are correct)
         segmentation_model_path = 'best-segmentation-m.pt'
         detection_model_path = 'best-detection-xl.pt'
 
-        # Run the pipeline (you might need to modify this function to work with Streamlit)
+        # Run the pipeline
         processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
-        # Display the processed image
-        st.image(processed_image, caption='Processed Image', use_column_width=True)
-    
-    if isinstance(processed_image, np.ndarray):
-        processed_image = Image.fromarray(processed_image)
-
-    # Debugging: Print type and size of the processed image
-    print("Processed image type:", type(processed_image))
-    print("Processed image size:", processed_image.size)
+        if isinstance(processed_image, np.ndarray):
+            # Convert NumPy array to PIL Image
+            processed_image = Image.fromarray(processed_image)
 
     # Display the processed image
-    try:
-        st.image(processed_image, caption='Processed Image', use_column_width=True)
-    except Exception as e:
-        st.error("An error occurred when displaying the image: " + str(e))
+    if processed_image:
+        try:
+            st.image(processed_image, caption='Processed Image', use_column_width=True)
+        except Exception as e:
+            st.error("An error occurred when displaying the image: " + str(e))
 
 if __name__ == "__main__":
     main()
