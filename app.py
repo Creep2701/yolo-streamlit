@@ -8,6 +8,7 @@ import cv2
 import streamlit as st
 import requests
 from io import BytesIO
+import os
 
 
 def apply_elliptical_mask(image_path):
