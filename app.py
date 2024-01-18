@@ -162,10 +162,11 @@ def main():
 
         if processed_image is not None:
             try:
-                processed_image.save("debug_processed_image.jpg")
-                st.image(processed_image, caption='Processed Image', use_column_width=True)
+                processed_image.save("debug_processed_image.jpg")  # Save the processed image
+                st.image(processed_image, caption='Processed Image', use_column_width=True)  # Display the processed image
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
+
     
     debug_image_path = "debug_processed_image.jpg"
     if os.path.exists(debug_image_path):
