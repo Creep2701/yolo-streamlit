@@ -137,8 +137,8 @@ def main():
     # Image Processing and Visualization
     if image_path:
         # Paths to your models (ensure these are correct)
-        segmentation_model_path = 'best-segmentation(medium).pt'
-        detection_model_path = 'best-detection(xlarge).pt'
+        segmentation_model_path = 'best-segmentation-m.pt'
+        detection_model_path = 'best-detection-xl.pt'
 
         # Run the pipeline (you might need to modify this function to work with Streamlit)
         processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
