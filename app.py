@@ -153,7 +153,7 @@ def main():
     if option == 'Upload':
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
         if uploaded_file is not None:
-            image_path = save_uploaded_file(uploaded_file)
+            image_path = st.image(uploaded_file, caption='Loaded Image', use_column_width=True)
 
     elif option == 'URL':
         url = st.text_input("Enter the URL of the image")
@@ -180,19 +180,7 @@ def main():
                 st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
-        else:
-            st.error("Processed image is None")
-        # Debug print using st.write()
-        st.write("Debug: Processed image shape:", processed_image.shape if processed_image is not None else "N/A")
-    else:
-        st.error("Image path is not valid")
-    
-    debug_image_path = "/mount/src/yolo-streamlit/debug_processed_image.png"
-    if os.path.exists(debug_image_path):
-        debug_image = Image.open(debug_image_path)
-        st.image(debug_image, caption='Debug Image', use_column_width=True)
-    else:
-        st.error("Debug image not found.")
+
 
 if __name__ == "__main__":
     main()
