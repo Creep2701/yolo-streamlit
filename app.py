@@ -175,17 +175,19 @@ def main():
             processed_image = Image.fromarray(processed_image)
 
         # After processing the image
+# After processing the image
         if processed_image is not None:
             try:
                 # Convert the processed image to RGB mode
                 processed_image_rgb = processed_image.convert("RGB")
 
                 # Save the RGB image as JPEG
-                processed_image_rgb.save(image_path, "JPEG")
+                processed_image_rgb.save(image_path, format="JPEG")
 
                 st.image(processed_image_rgb, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
+
 
 
 
