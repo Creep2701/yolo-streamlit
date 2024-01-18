@@ -57,40 +57,54 @@ def perform_segmentation(segmentation_model_path, image_path):
     return segmentation_image
 
 def preprocess_and_predict(image_path, detection_model_path, segmentation_model_path):
-    # Perform segmentation and get the result image
-    target_image = perform_segmentation(segmentation_model_path, image_path)
+    try:
+        # Perform segmentation and get the result image
+        target_image = perform_segmentation(segmentation_model_path, image_path)
 
-    # Convert PIL Image to NumPy array in RGB format
-    target_image_np = np.array(target_image)
+        # Convert PIL Image to NumPy array in RGB format
+        target_image_np = np.array(target_image)
 
-    # Ensure the target image is in the correct format for OpenCV
-    # Convert RGB (PIL) to BGR (OpenCV)
-    target_image_np = cv2.cvtColor(target_image_np, cv2.COLOR_RGB2BGR)
+        # Ensure the target image is in the correct format for OpenCV
+        # Convert RGB (PIL) to BGR (OpenCV)
+        target_image_np = cv2.cvtColor(target_image_np, cv2.COLOR_RGB2BGR)
 
-    # Apply the elliptical mask to preprocess the image
-    preprocessed_image = apply_elliptical_mask(image_path)
-    preprocessed_image_path = 'temp_preprocessed.jpg'
-    cv2.imwrite(preprocessed_image_path, preprocessed_image)
+        # Apply the elliptical mask to preprocess the image
+        preprocessed_image = apply_elliptical_mask(image_path)
+        preprocessed_image_path = 'temp_preprocessed.jpg'
+        cv2.imwrite(preprocessed_image_path, preprocessed_image)
 
-    # Load the YOLO model for object detection
-    detection_model = YOLO(detection_model_path)
-    detection_results = detection_model.predict(source=preprocessed_image_path, conf=0.55)
+        # Load the YOLO model for object detection
+        detection_model = YOLO(detection_model_path)
+        detection_results = detection_model.predict(source=preprocessed_image_path, conf=0.55)
 
-    # Debugging: Print the shape and data type of the image
-    print("Target image shape:", target_image_np.shape)
-    print("Target image data type:", target_image_np.dtype)
+        # Debugging: Print the shape and data type of the image
+        print("Target image shape:", target_image_np.shape)
+        print("Target image data type:", target_image_np.dtype)
 
-    # Draw bounding boxes on the target image
-    for r in detection_results:
-        for detection in r.boxes.data:
-            x1, y1, x2, y2, conf, cls_id = detection
-            label = f'{r.names[int(cls_id)]} {conf:.2f}'
-            plot_one_box([x1, y1, x2, y2], target_image_np, label=label, color=(255, 0, 0), line_thickness=2)
+        # Draw bounding boxes on the target image
+        for r in detection_results:
+            for detection in r.boxes.data:
+                x1, y1, x2, y2, conf, cls_id = detection
+                label = f'{r.names[int(cls_id)]} {conf:.2f}'
+                plot_one_box([x1, y1, x2, y2], target_image_np, label=label, color=(255, 0, 0), line_thickness=2)
 
-    # Convert back to RGB format for display
-    final_image = cv2.cvtColor(target_image_np, cv2.COLOR_BGR2RGB)
-    final_image = Image.fromarray(final_image)
-    final_image.show()
+        # Convert back to RGB format for display
+        final_image = cv2.cvtColor(target_image_np, cv2.COLOR_BGR2RGB)
+        final_image = Image.fromarray(final_image)
+        
+        # Display intermediate results for debugging
+        st.image(target_image, caption='Segmented Image', use_column_width=True)
+        st.image(Image.fromarray(preprocessed_image), caption='Preprocessed Image', use_column_width=True)
+        
+        # Display the final processed image
+        st.image(final_image, caption='Final Processed Image', use_column_width=True)
+        
+    except Exception as e:
+        # Handle any exceptions that may occur
+        print(f"An error occurred: {e}")
+
+# Call preprocess_and_predict within your main function or as needed
+
    # final_image.save('final_result.jpg')
 
 import streamlit as st
