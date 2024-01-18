@@ -180,8 +180,7 @@ def main():
                 st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
-        else:
-            st.error("Processed image is None")
+
 
     
 
