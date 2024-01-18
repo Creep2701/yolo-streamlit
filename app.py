@@ -182,17 +182,9 @@ def main():
                 st.error(f"An error occurred when displaying the image: {e}")
         else:
             st.error("Processed image is None")
-        # Debug print using st.write()
-        st.write("Debug: Processed image shape:", processed_image.shape if processed_image is not None else "N/A")
-    else:
-        st.error("Image path is not valid")
+
     
-    debug_image_path = "/mount/src/yolo-streamlit/debug_processed_image.jpg"
-    if os.path.exists(debug_image_path):
-        debug_image = Image.open(debug_image_path)
-        st.image(debug_image, caption='Debug Image', use_column_width=True)
-    else:
-        st.error("Debug image not found.")
+
 
 if __name__ == "__main__":
     main()
