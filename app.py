@@ -149,7 +149,7 @@ def main():
             if image:
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
-    # Descriptions and User Inputs
+    # Descriptions and User Inputs  
     # (Add any additional inputs or descriptions here)
 
     # Image Processing and Visualization
@@ -163,6 +163,19 @@ def main():
 
         # Display the processed image
         st.image(processed_image, caption='Processed Image', use_column_width=True)
+    
+    if isinstance(processed_image, np.ndarray):
+    processed_image = Image.fromarray(processed_image)
+
+    # Debugging: Print type and size of the processed image
+    print("Processed image type:", type(processed_image))
+    print("Processed image size:", processed_image.size)
+
+    # Display the processed image
+    try:
+        st.image(processed_image, caption='Processed Image', use_column_width=True)
+    except Exception as e:
+        st.error("An error occurred when displaying the image: " + str(e))
 
 if __name__ == "__main__":
     main()
