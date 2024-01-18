@@ -132,72 +132,40 @@ def main():
     st.title("YOLO Image Processing App")
 
     # Image upload or URL input
-    option = st.selectbox("How would you like to provide the image?", 
-                          ['Upload', 'URL'])
-
+    option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
     image_path = None
+
     if option == 'Upload':
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
         if uploaded_file is not None:
             image_path = save_uploaded_file(uploaded_file)
-    else:
+
+    elif option == 'URL':
         url = st.text_input("Enter the URL of the image")
         if url:
             image = load_image_from_url(url)
-            image_path = "temp_image.jpg"
-            image.save(image_path)
             if image:
+                image_path = "temp_image.jpg"
+                image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
-    # Descriptions and User Inputs  
-    # (Add any additional inputs or descriptions here)
-
+    # Image Processing and Visualization
     processed_image = None
     if image_path:
-        # Paths to your models (ensure these are correct)
         segmentation_model_path = 'best-segmentation-m.pt'
         detection_model_path = 'best-detection-xl.pt'
-
-        # Run the pipeline
         processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
-        print("Processed image type after processing:", type(processed_image))
         if isinstance(processed_image, np.ndarray):
-            print("Processed image shape:", processed_image.shape)
             processed_image = Image.fromarray(processed_image)
 
-        elif isinstance(processed_image, Image.Image):
-            print("Processed PIL image size:", processed_image.size)
-        
         if processed_image is not None:
-            print("Processed image type after processing:", type(processed_image))
-            if isinstance(processed_image, np.ndarray):
-                print("Processed image shape:", processed_image.shape)
-                processed_image = Image.fromarray(processed_image)
-            elif isinstance(processed_image, Image.Image):
-                print("Processed PIL image size:", processed_image.size)
-            
-            # Save for debugging
-            processed_image.save("debug_processed_image.jpg")
-
-            # Display the processed image
             try:
+                processed_image.save("debug_processed_image.jpg")
                 st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
-                st.error(f"An error occurred when displaying the image: {e}"
-
-
-    # # Display the processed image
-    # if processed_image is not None:
-    #     try:
-    #         st.image(processed_image, caption='Processed Image', use_column_width=True)
-    #     except Exception as e:
-    #         st.error(f"An error occurred when displaying the image: {e}")
-    
-    # if isinstance(processed_image, Image.Image):
-    #    processed_image.save("debug_processed_image.jpg")
-
-
+                st.error(f"An error occurred when displaying the image: {e}")
 
 if __name__ == "__main__":
     main()
+
