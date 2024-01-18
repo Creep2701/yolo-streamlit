@@ -156,18 +156,22 @@ def main():
         segmentation_model_path = 'best-segmentation-m.pt'
         detection_model_path = 'best-detection-xl.pt'
         processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
-        print(processed_image.format)
-        st.image(processed_image, caption='Processed Image', use_column_width=True)
+
         if isinstance(processed_image, np.ndarray):
             processed_image = Image.fromarray(processed_image)
 
         if processed_image is not None:
             try:
-                processed_image.save("debug_processed_image.jpg")  # Save the processed image
-                st.image(processed_image, caption='Processed Image', use_column_width=True)  # Display the processed image
+                processed_image.save("debug_processed_image.jpg")
+                st.image(processed_image, caption='Processed Image', use_column_width=True)
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
-
+        else:
+            st.error("Processed image is None")
+        # Debug print using st.write()
+        st.write("Debug: Processed image shape:", processed_image.shape if processed_image is not None else "N/A")
+    else:
+        st.error("Image path is not valid")
     
     debug_image_path = "/mount/src/yolo-streamlit/debug_processed_image.jpg"
     if os.path.exists(debug_image_path):
