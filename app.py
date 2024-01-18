@@ -167,24 +167,23 @@ def main():
                 image_path = "temp_image.png"
                 image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
+    if image_path is not None and st.button("Run Model"):
+        # Image Processing and Visualization
+        processed_image = None
+        if image_path:
+            segmentation_model_path = 'best-segmentation-m.pt'
+            detection_model_path = 'best-detection-xl.pt'
+            processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
-    # Image Processing and Visualization
-    processed_image = None
-    if image_path:
-        segmentation_model_path = 'best-segmentation-m.pt'
-        detection_model_path = 'best-detection-xl.pt'
-        processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
+            if isinstance(processed_image, np.ndarray):
+                processed_image = Image.fromarray(processed_image)
 
-        if isinstance(processed_image, np.ndarray):
-            processed_image = Image.fromarray(processed_image)
-
-        if processed_image is not None:
-            try:
-                processed_image.save("debug_processed_image.png")
-                st.image(processed_image, caption='Processed Image', use_column_width=True)
-            except Exception as e:
-                st.error(f"An error occurred when displaying the image: {e}")
-
+            if processed_image is not None:
+                try:
+                    processed_image.save("debug_processed_image.png")
+                    st.image(processed_image, caption='Processed Image', use_column_width=True)
+                except Exception as e:
+                    st.error(f"An error occurred when displaying the image: {e}")
 
 if __name__ == "__main__":
     main()
