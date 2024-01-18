@@ -154,7 +154,7 @@ def main():
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
         if uploaded_file is not None:
             image_path = "temp_image.jpg"
-            image.save(image_path)
+            uploaded_file.save(image_path)
             st.image(image, caption='Loaded Image', use_column_width=True)
 
     elif option == 'URL':
