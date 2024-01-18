@@ -164,9 +164,8 @@ def main():
                 image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
 
-    # Image Processing and Visualization
-    processed_image = None
-    if image_path:
+    # "Run Model" button
+    if st.button("Run Model") and image_path:
         segmentation_model_path = 'best-segmentation-m.pt'
         detection_model_path = 'best-detection-xl.pt'
         processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
@@ -181,8 +180,6 @@ def main():
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
 
-
-    
 
 
 if __name__ == "__main__":
