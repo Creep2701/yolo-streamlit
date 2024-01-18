@@ -100,9 +100,25 @@ from io import BytesIO
 # ...
 
 def load_image_from_url(url):
-    response = requests.get(url)
-    img = Image.open(BytesIO(response.content))
-    return img
+    try:
+        # Send a GET request to the specified URL
+        response = requests.get(url)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Open the image from the byte stream of the response content
+            image = Image.open(BytesIO(response.content))
+            return image  # Return the image object for further processing
+        else:
+            # Display an error message if the request was not successful
+            st.error("Failed to fetch the image. Status code: " + str(response.status_code))
+            return None
+
+    except Exception as e:
+        # Display an error message if an exception occurs (e.g., network issues, invalid URL)
+        st.error("An error occurred: " + str(e))
+        return None
+
 
 def save_uploaded_file(uploaded_file):
     try:
@@ -130,6 +146,8 @@ def main():
             image = load_image_from_url(url)
             image_path = "temp_image.jpg"
             image.save(image_path)
+            if image:
+                st.image(image, caption='Loaded Image', use_column_width=True)
 
     # Descriptions and User Inputs
     # (Add any additional inputs or descriptions here)
