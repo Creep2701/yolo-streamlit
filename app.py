@@ -166,11 +166,16 @@ def main():
             processed_image = Image.fromarray(processed_image)
 
     # Display the processed image
-    if processed_image:
+    if processed_image is not None:
         try:
             st.image(processed_image, caption='Processed Image', use_column_width=True)
         except Exception as e:
-            st.error("An error occurred when displaying the image: " + str(e))
+            st.error(f"An error occurred when displaying the image: {e}")
+    
+    if isinstance(processed_image, Image.Image):
+       processed_image.save("debug_processed_image.jpg")
+
+
 
 if __name__ == "__main__":
     main()
