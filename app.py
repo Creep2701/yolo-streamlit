@@ -143,6 +143,8 @@ def save_uploaded_file(uploaded_file):
     except Exception as e:
         return None
 
+# ... (previous code)
+
 def main():
     st.title("YOLO Image Processing App")
 
@@ -153,6 +155,7 @@ def main():
     if option == 'Upload':
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
         if uploaded_file is not None:
+            # Save the uploaded image to a temporary file
             image_path = save_uploaded_file(uploaded_file)
 
     elif option == 'URL':
@@ -160,6 +163,7 @@ def main():
         if url:
             image = load_image_from_url(url)
             if image:
+                # Save the loaded image to a temporary file
                 image_path = "temp_image.jpg"
                 image.save(image_path)
                 st.image(image, caption='Loaded Image', use_column_width=True)
@@ -180,8 +184,7 @@ def main():
             except Exception as e:
                 st.error(f"An error occurred when displaying the image: {e}")
 
-
-
 if __name__ == "__main__":
     main()
+
 
