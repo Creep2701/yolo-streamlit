@@ -172,7 +172,7 @@ def assemble_model_file(parts_folder, original_filename):
 def main():
     st.title("YOLO Image Processing App")
 
-    parts_folder = 'path/to/model_parts'  # Update this path
+    parts_folder = 'split_files/'  # Update this path
     segmentation_model_path = assemble_model_file(parts_folder, 'best-segmentation-m.pt')
     detection_model_path = assemble_model_file(parts_folder, 'best-detection-xl.pt')
 
