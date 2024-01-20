@@ -181,6 +181,8 @@ def main():
 
     # Check if model files were loaded successfully
     if segmentation_model_bytes is not None and detection_model_bytes is not None:
+        print("Model files loaded successfully")
+
         # Image upload or URL input
         option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
         image_path = None
@@ -193,6 +195,7 @@ def main():
                 image_path = "temp_image.jpg"
                 pil_image.save(image_path, "JPEG")
                 st.image(pil_image, caption='Loaded Image', use_column_width=True)
+                print("Uploaded image saved successfully")
 
         elif option == 'URL':
             url = st.text_input("Enter the URL of the image")
@@ -202,6 +205,8 @@ def main():
                     image_path = "temp_image.png"
                     image.save(image_path)
                     st.image(image, caption='Loaded Image', use_column_width=True)
+                    print("Image from URL saved successfully")
+
         if image_path is not None and st.button("Run Model"):
             # Image Processing and Visualization
             processed_image = None
@@ -210,10 +215,12 @@ def main():
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".pt") as segmentation_tempfile:
                     segmentation_tempfile.write(segmentation_model_bytes.read())
                     segmentation_model_path = segmentation_tempfile.name
+                    print("Segmentation model saved to:", segmentation_model_path)
                 
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".pt") as detection_tempfile:
                     detection_tempfile.write(detection_model_bytes.read())
                     detection_model_path = detection_tempfile.name
+                    print("Detection model saved to:", detection_model_path)
 
                 processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
@@ -224,11 +231,12 @@ def main():
                     try:
                         processed_image.save("debug_processed_image.png")
                         st.image(processed_image, caption='Processed Image', use_column_width=True)
+                        print("Processed image saved successfully")
                     except Exception as e:
                         st.error(f"An error occurred when displaying the image: {e}")
-
+                        print("Error when displaying processed image:", e)
+    else:
+        st.error("Failed to load model files. Check the URLs or internet connection.")
 
 if __name__ == "__main__":
     main()
-
-
