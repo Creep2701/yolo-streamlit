@@ -38,9 +38,15 @@ def download_model_files():
         st.error(f"Failed to download model files: {e}")
         return None, None
 
-# Check if model files exist
 def model_files_exist():
-    return os.path.isfile("best-segmentation-medium.pt") and os.path.isfile("best-detection-xlarge.pt")
+    segmentation_model_path = "best-segmentation-medium.pt"
+    detection_model_path = "best-detection-xlarge.pt"
+
+    if os.path.isfile(segmentation_model_path) and os.path.isfile(detection_model_path):
+        return segmentation_model_path, detection_model_path
+    else:
+        return None, None
+    
 
 # Function to load an image from a URL
 def load_image_from_url(url):
@@ -66,15 +72,14 @@ def load_image_from_url(url):
 def main():
     st.title("YOLO Image Processing App")
 
-    # Check if model files exist
     segmentation_model_path, detection_model_path = model_files_exist()
 
-    if segmentation_model_path is not None and detection_model_path is not None:
+    if segmentation_model_path and detection_model_path:
         st.success("Model files loaded successfully.")
     else:
         if st.button("Download Model Files"):
             segmentation_model_path, detection_model_path = download_model_files()
-            if segmentation_model_path is not None and detection_model_path is not None:
+            if segmentation_model_path and detection_model_path:
                 st.success("Model files downloaded successfully.")
             else:
                 st.error("Failed to download model files. Please try again.")
