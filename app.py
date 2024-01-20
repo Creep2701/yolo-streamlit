@@ -143,48 +143,79 @@ def save_uploaded_file(uploaded_file):
     except Exception as e:
         return None
 
+@st.cache(allow_output_mutation=True)
+def load_model_files():
+    # Define the Dropbox links for your model files
+    segmentation_model_url = "https://www.dropbox.com/scl/fi/f3udyx6kh69pa7zfvtd3g/best-segmentation-medium.pt?rlkey=s1401c70wcj37oklp29khgxkl&dl=0"
+    detection_model_url = "https://www.dropbox.com/scl/fi/9w73ow1w7mf2o8u6umtp4/best-detection-xlarge.pt?rlkey=g1uutkzrqxh2xlac9s25s0l0m&dl=0"
+
+    # Download the segmentation model file
+    response_segmentation = requests.get(segmentation_model_url)
+    if response_segmentation.status_code == 200:
+        segmentation_model_bytes = BytesIO(response_segmentation.content)
+    else:
+        st.error("Failed to download the segmentation model file.")
+        segmentation_model_bytes = None
+
+    # Download the detection model file
+    response_detection = requests.get(detection_model_url)
+    if response_detection.status_code == 200:
+        detection_model_bytes = BytesIO(response_detection.content)
+    else:
+        st.error("Failed to download the detection model file.")
+        detection_model_bytes = None
+
+    return segmentation_model_bytes, detection_model_bytes
+
+
 def main():
     st.title("YOLO Image Processing App")
 
-    # Image upload or URL input
-    option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
-    image_path = None
+    # Load cached model files
+    segmentation_model_bytes, detection_model_bytes = load_model_files()
 
-    if option == 'Upload':
-        uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-        if uploaded_file is not None:
-            # Open and convert the uploaded image to JPEG format
-            pil_image = Image.open(uploaded_file)
-            image_path = "temp_image.jpg"
-            pil_image.save(image_path, "JPEG")
-            st.image(pil_image, caption='Loaded Image', use_column_width=True)
+    # Check if model files were loaded successfully
+    if segmentation_model_bytes is not None and detection_model_bytes is not None:
+        # Image upload or URL input
+        option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
+        image_path = None
 
-    elif option == 'URL':
-        url = st.text_input("Enter the URL of the image")
-        if url:
-            image = load_image_from_url(url)
-            if image:
-                image_path = "temp_image.png"
-                image.save(image_path)
-                st.image(image, caption='Loaded Image', use_column_width=True)
-    if image_path is not None and st.button("Run Model"):
-        # Image Processing and Visualization
-        processed_image = None
-        if image_path:
-            segmentation_model_path = 'best-segmentation-m.pt'
-            detection_model_path = 'best-detection-xl.pt'
-            processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
+        if option == 'Upload':
+            uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
+            if uploaded_file is not None:
+                # Open and convert the uploaded image to JPEG format
+                pil_image = Image.open(uploaded_file)
+                image_path = "temp_image.jpg"
+                pil_image.save(image_path, "JPEG")
+                st.image(pil_image, caption='Loaded Image', use_column_width=True)
 
-            if isinstance(processed_image, np.ndarray):
-                processed_image = Image.fromarray(processed_image)
+        elif option == 'URL':
+            url = st.text_input("Enter the URL of the image")
+            if url:
+                image = load_image_from_url(url)
+                if image:
+                    image_path = "temp_image.png"
+                    image.save(image_path)
+                    st.image(image, caption='Loaded Image', use_column_width=True)
+        if image_path is not None and st.button("Run Model"):
+            # Image Processing and Visualization
+            processed_image = None
+            if image_path:
+                segmentation_model_path = 'best-segmentation-m.pt'
+                detection_model_path = 'best-detection-xl.pt'
+                processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
-            if processed_image is not None:
-                try:
-                    processed_image.save("debug_processed_image.png")
-                    st.image(processed_image, caption='Processed Image', use_column_width=True)
-                except Exception as e:
-                    st.error(f"An error occurred when displaying the image: {e}")
+                if isinstance(processed_image, np.ndarray):
+                    processed_image = Image.fromarray(processed_image)
+
+                if processed_image is not None:
+                    try:
+                        processed_image.save("debug_processed_image.png")
+                        st.image(processed_image, caption='Processed Image', use_column_width=True)
+                    except Exception as e:
+                        st.error(f"An error occurred when displaying the image: {e}")
 
 if __name__ == "__main__":
     main()
+
 
