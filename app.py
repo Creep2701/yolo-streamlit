@@ -187,7 +187,7 @@ def main():
         st.success("Model files downloaded successfully.")
     else:
         st.warning("Model files not downloaded yet. Click the button below to download.")
-        return  # Stop execution if model files are not downloaded
+        #return  # Stop execution if model files are not downloaded
 
     # Button to download model files
     if not model_files_exist():
