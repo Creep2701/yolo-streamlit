@@ -148,7 +148,7 @@ def save_uploaded_file(uploaded_file):
         return None
 
 # Configure logging to capture errors
-logging.basicConfig(filename='app.log', level=logging.ERROR)
+#logging.basicConfig(filename='app.log', level=logging.ERROR)
 
 # Function to download model files
 def download_model_files():
