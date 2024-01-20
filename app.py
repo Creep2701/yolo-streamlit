@@ -182,6 +182,10 @@ import tempfile
 def main():
     st.title("YOLO Image Processing App")
 
+        # Initialize model paths
+    segmentation_model_path = None
+    detection_model_path = None
+    
     # Check if model files exist
     if not model_files_exist():
         if st.button("Download Model Files"):
