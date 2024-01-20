@@ -17,26 +17,24 @@ def download_model_files():
     try:
         temp_dir = tempfile.mkdtemp()
 
-        # Function to download and save the model file
         def download_file(url, filename):
-            response = requests.get(url, stream=True)
-            response.raise_for_status()
-            with open(filename, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
+            with requests.get(url, stream=True) as r:
+                r.raise_for_status()
+                with open(filename, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
 
-        # Download and save the segmentation model file
         segmentation_model_path = os.path.join(temp_dir, "best-segmentation-medium.pt")
-        download_file(segmentation_model_url, segmentation_model_path)
-
-        # Download and save the detection model file
         detection_model_path = os.path.join(temp_dir, "best-detection-xlarge.pt")
-        download_file(detection_model_url, detection_model_path)
+
+        download_file(segmentation_model_url.replace("?dl=0", "?dl=1"), segmentation_model_path)
+        download_file(detection_model_url.replace("?dl=0", "?dl=1"), detection_model_path)
 
         return segmentation_model_path, detection_model_path
     except Exception as e:
         st.error(f"Failed to download model files: {e}")
         return None, None
+
 
 def model_files_exist():
     segmentation_model_path = "best-segmentation-medium.pt"
