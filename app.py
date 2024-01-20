@@ -15,25 +15,25 @@ detection_model_url = "https://www.dropbox.com/scl/fi/9w73ow1w7mf2o8u6umtp4/best
 # Function to download model files
 def download_model_files():
     try:
-        # Create a temporary directory to store the model files
         temp_dir = tempfile.mkdtemp()
 
-        # Download the segmentation model file
-        response_segmentation = requests.get(segmentation_model_url)
-        response_segmentation.raise_for_status()
-        segmentation_model_path = os.path.join(temp_dir, "best-segmentation-medium.pt")
-        with open(segmentation_model_path, "wb") as f:
-            f.write(response_segmentation.content)
+        # Function to download and save the model file
+        def download_file(url, filename):
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            with open(filename, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
 
-        # Download the detection model file
-        response_detection = requests.get(detection_model_url)
-        response_detection.raise_for_status()
+        # Download and save the segmentation model file
+        segmentation_model_path = os.path.join(temp_dir, "best-segmentation-medium.pt")
+        download_file(segmentation_model_url, segmentation_model_path)
+
+        # Download and save the detection model file
         detection_model_path = os.path.join(temp_dir, "best-detection-xlarge.pt")
-        with open(detection_model_path, "wb") as f:
-            f.write(response_detection.content)
+        download_file(detection_model_url, detection_model_path)
 
         return segmentation_model_path, detection_model_path
-
     except Exception as e:
         st.error(f"Failed to download model files: {e}")
         return None, None
