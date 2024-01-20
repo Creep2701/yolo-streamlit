@@ -183,60 +183,58 @@ def main():
     st.title("YOLO Image Processing App")
 
     # Check if model files exist
-    if model_files_exist():
-        st.success("Model files downloaded successfully.")
-    else:
-        if st.button("Download Model Files"):
-            segmentation_model_path, detection_model_path = download_model_files()
-        else:
-            st.warning("Model files not downloaded yet. Click the button above to download.")
-
-    # Button to download model files
     if not model_files_exist():
         if st.button("Download Model Files"):
             segmentation_model_path, detection_model_path = download_model_files()
+            if segmentation_model_path is not None and detection_model_path is not None:
+                st.success("Model files downloaded successfully.")
+            else:
+                st.error("Failed to download model files.")
+        else:
+            st.warning("Model files not downloaded yet. Click the button above to download.")
+            return  # Exit early if model files are not downloaded
 
-        # Image upload or URL input
-        option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
-        image_path = None
+    # Image upload or URL input
+    option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
+    image_path = None
 
-        if option == 'Upload':
-            uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-            if uploaded_file is not None:
-                # Open and convert the uploaded image to JPEG format
-                pil_image = Image.open(uploaded_file)
-                image_path = "temp_image.jpg"
-                pil_image.save(image_path, "JPEG")
-                st.image(pil_image, caption='Loaded Image', use_column_width=True)
-                print("Uploaded image saved successfully")
+    if option == 'Upload':
+        uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
+        if uploaded_file is not None:
+            # Open and convert the uploaded image to JPEG format
+            pil_image = Image.open(uploaded_file)
+            image_path = "temp_image.jpg"
+            pil_image.save(image_path, "JPEG")
+            st.image(pil_image, caption='Loaded Image', use_column_width=True)
+            print("Uploaded image saved successfully")
 
-        elif option == 'URL':
-            url = st.text_input("Enter the URL of the image")
-            if url:
-                image = load_image_from_url(url)
-                if image:
-                    image_path = "temp_image.png"
-                    image.save(image_path)
-                    st.image(image, caption='Loaded Image', use_column_width=True)
-                    print("Image from URL saved successfully")
+    elif option == 'URL':
+        url = st.text_input("Enter the URL of the image")
+        if url:
+            image = load_image_from_url(url)
+            if image:
+                image_path = "temp_image.png"
+                image.save(image_path)
+                st.image(image, caption='Loaded Image', use_column_width=True)
+                print("Image from URL saved successfully")
 
-        if image_path is not None and st.button("Run Model"):
-            # Image Processing and Visualization
-            processed_image = None
-            if image_path:
-                processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
+    if image_path is not None and st.button("Run Model"):
+        # Image Processing and Visualization
+        processed_image = None
+        if image_path:
+            processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
-                if isinstance(processed_image, np.ndarray):
-                    processed_image = Image.fromarray(processed_image)
+            if isinstance(processed_image, np.ndarray):
+                processed_image = Image.fromarray(processed_image)
 
-                if processed_image is not None:
-                    try:
-                        processed_image.save("debug_processed_image.png")
-                        st.image(processed_image, caption='Processed Image', use_column_width=True)
-                        print("Processed image saved successfully")
-                    except Exception as e:
-                        st.error(f"An error occurred when displaying the image: {e}")
-                        print("Error when displaying processed image:", e)
+            if processed_image is not None:
+                try:
+                    processed_image.save("debug_processed_image.png")
+                    st.image(processed_image, caption='Processed Image', use_column_width=True)
+                    print("Processed image saved successfully")
+                except Exception as e:
+                    st.error(f"An error occurred when displaying the image: {e}")
+                    print("Error when displaying processed image:", e)
 
 if __name__ == "__main__":
     main()
