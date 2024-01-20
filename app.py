@@ -147,7 +147,7 @@ def save_uploaded_file(uploaded_file):
     except Exception as e:
         return None
 
-def download_model_files():
+def load_model_files():
     # Define the Dropbox links for your model files
     segmentation_model_url = "https://www.dropbox.com/scl/fi/f3udyx6kh69pa7zfvtd3g/best-segmentation-medium.pt?rlkey=s1401c70wcj37oklp29khgxkl&dl=0"
     detection_model_url = "https://www.dropbox.com/scl/fi/9w73ow1w7mf2o8u6umtp4/best-detection-xlarge.pt?rlkey=g1uutkzrqxh2xlac9s25s0l0m&dl=0"
