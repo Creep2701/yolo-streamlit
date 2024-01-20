@@ -147,38 +147,45 @@ def save_uploaded_file(uploaded_file):
     except Exception as e:
         return None
 
-def load_model_files():
+# Configure logging to capture errors
+logging.basicConfig(filename='app.log', level=logging.ERROR)
+
+# Function to download model files
+def download_model_files():
     # Define the Dropbox links for your model files
     segmentation_model_url = "https://www.dropbox.com/scl/fi/f3udyx6kh69pa7zfvtd3g/best-segmentation-medium.pt?rlkey=s1401c70wcj37oklp29khgxkl&dl=0"
     detection_model_url = "https://www.dropbox.com/scl/fi/9w73ow1w7mf2o8u6umtp4/best-detection-xlarge.pt?rlkey=g1uutkzrqxh2xlac9s25s0l0m&dl=0"
 
-    # Download the segmentation model file
-    response_segmentation = requests.get(segmentation_model_url)
-    if response_segmentation.status_code == 200:
+    try:
+        # Download the segmentation model file
+        response_segmentation = requests.get(segmentation_model_url)
+        response_segmentation.raise_for_status()  # Raise an error for non-200 responses
         with open("best-segmentation-medium.pt", "wb") as f:
             f.write(response_segmentation.content)
-    else:
-        st.error("Failed to download the segmentation model file.")
 
-    # Download the detection model file
-    response_detection = requests.get(detection_model_url)
-    if response_detection.status_code == 200:
+        # Download the detection model file
+        response_detection = requests.get(detection_model_url)
+        response_detection.raise_for_status()  # Raise an error for non-200 responses
         with open("best-detection-xlarge.pt", "wb") as f:
             f.write(response_detection.content)
-    else:
-        st.error("Failed to download the detection model file.")
+
+    except Exception as e:
+        logging.error(f"Failed to download model files: {e}")
+        st.error("Failed to download model files. Please check the URLs or your internet connection.")
+        return None, None
+
+    return "best-segmentation-medium.pt", "best-detection-xlarge.pt"
 
 import tempfile
-
 def main():
     st.title("YOLO Image Processing App")
 
-    # Load cached model files
-    segmentation_model_bytes, detection_model_bytes = load_model_files()
+    # Download model files
+    segmentation_model_path, detection_model_path = download_model_files()
 
-    # Check if model files were loaded successfully
-    if segmentation_model_bytes is not None and detection_model_bytes is not None:
-        print("Model files loaded successfully")
+    # Check if model files were downloaded successfully
+    if segmentation_model_path is not None and detection_model_path is not None:
+        print("Model files downloaded successfully")
 
         # Image upload or URL input
         option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
@@ -208,17 +215,6 @@ def main():
             # Image Processing and Visualization
             processed_image = None
             if image_path:
-                # Save model bytes to temporary files
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".pt") as segmentation_tempfile:
-                    segmentation_tempfile.write(segmentation_model_bytes.read())
-                    segmentation_model_path = segmentation_tempfile.name
-                    print("Segmentation model saved to:", segmentation_model_path)
-                
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".pt") as detection_tempfile:
-                    detection_tempfile.write(detection_model_bytes.read())
-                    detection_model_path = detection_tempfile.name
-                    print("Detection model saved to:", detection_model_path)
-
                 processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
                 if isinstance(processed_image, np.ndarray):
@@ -232,8 +228,6 @@ def main():
                     except Exception as e:
                         st.error(f"An error occurred when displaying the image: {e}")
                         print("Error when displaying processed image:", e)
-    else:
-        st.error("Failed to load model files. Check the URLs or internet connection.")
 
 if __name__ == "__main__":
     main()
