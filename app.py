@@ -147,8 +147,7 @@ def save_uploaded_file(uploaded_file):
     except Exception as e:
         return None
 
-@st.cache(allow_output_mutation=True)
-def load_model_files():
+def download_model_files():
     # Define the Dropbox links for your model files
     segmentation_model_url = "https://www.dropbox.com/scl/fi/f3udyx6kh69pa7zfvtd3g/best-segmentation-medium.pt?rlkey=s1401c70wcj37oklp29khgxkl&dl=0"
     detection_model_url = "https://www.dropbox.com/scl/fi/9w73ow1w7mf2o8u6umtp4/best-detection-xlarge.pt?rlkey=g1uutkzrqxh2xlac9s25s0l0m&dl=0"
@@ -156,20 +155,18 @@ def load_model_files():
     # Download the segmentation model file
     response_segmentation = requests.get(segmentation_model_url)
     if response_segmentation.status_code == 200:
-        segmentation_model_bytes = BytesIO(response_segmentation.content)
+        with open("best-segmentation-medium.pt", "wb") as f:
+            f.write(response_segmentation.content)
     else:
         st.error("Failed to download the segmentation model file.")
-        segmentation_model_bytes = None
 
     # Download the detection model file
     response_detection = requests.get(detection_model_url)
     if response_detection.status_code == 200:
-        detection_model_bytes = BytesIO(response_detection.content)
+        with open("best-detection-xlarge.pt", "wb") as f:
+            f.write(response_detection.content)
     else:
         st.error("Failed to download the detection model file.")
-        detection_model_bytes = None
-
-    return segmentation_model_bytes, detection_model_bytes
 
 import tempfile
 
