@@ -132,30 +132,6 @@ def model_files_exist():
     return os.path.isfile("best-segmentation-medium.pt") and os.path.isfile("best-detection-xlarge.pt")
 
 # Function to download model files
-def download_model_files():
-    # Define the Dropbox links for your model files
-    segmentation_model_url = "https://www.dropbox.com/scl/fi/f3udyx6kh69pa7zfvtd3g/best-segmentation-medium.pt?rlkey=s1401c70wcj37oklp29khgxkl&dl=0"
-    detection_model_url = "https://www.dropbox.com/scl/fi/9w73ow1w7mf2o8u6umtp4/best-detection-xlarge.pt?rlkey=g1uutkzrqxh2xlac9s25s0l0m&dl=0"
-
-    try:
-        # Download the segmentation model file
-        response_segmentation = requests.get(segmentation_model_url)
-        response_segmentation.raise_for_status()  # Raise an error for non-200 responses
-        with open("best-segmentation-medium.pt", "wb") as f:
-            f.write(response_segmentation.content)
-
-        # Download the detection model file
-        response_detection = requests.get(detection_model_url)
-        response_detection.raise_for_status()  # Raise an error for non-200 responses
-        with open("best-detection-xlarge.pt", "wb") as f:
-            f.write(response_detection.content)
-
-    except Exception as e:
-        logging.error(f"Failed to download model files: {e}")
-        st.error("Failed to download model files. Please check the URLs or your internet connection.")
-        return None, None
-
-    return "best-segmentation-medium.pt", "best-detection-xlarge.pt"
 
 # Function to load an image from a URL
 def load_image_from_url(url):
@@ -179,63 +155,81 @@ def load_image_from_url(url):
         return None
 
 import tempfile
+# Define the Dropbox links for your model files
+segmentation_model_url = "https://www.dropbox.com/scl/fi/f3udyx6kh69pa7zfvtd3g/best-segmentation-medium.pt?rlkey=s1401c70wcj37oklp29khgxkl&dl=0"
+detection_model_url = "https://www.dropbox.com/scl/fi/9w73ow1w7mf2o8u6umtp4/best-detection-xlarge.pt?rlkey=g1uutkzrqxh2xlac9s25s0l0m&dl=0"
+
+def download_model_files():
+    try:
+        # Create a temporary directory to store the model files
+        temp_dir = tempfile.mkdtemp()
+
+        # Download the segmentation model file
+        response_segmentation = requests.get(segmentation_model_url)
+        response_segmentation.raise_for_status()
+        segmentation_model_path = os.path.join(temp_dir, "best-segmentation-medium.pt")
+        with open(segmentation_model_path, "wb") as f:
+            f.write(response_segmentation.content)
+
+        # Download the detection model file
+        response_detection = requests.get(detection_model_url)
+        response_detection.raise_for_status()
+        detection_model_path = os.path.join(temp_dir, "best-detection-xlarge.pt")
+        with open(detection_model_path, "wb") as f:
+            f.write(response_detection.content)
+
+        return segmentation_model_path, detection_model_path
+
+    except Exception as e:
+        st.error(f"Failed to download model files: {e}")
+        return None, None
+
 def main():
     st.title("YOLO Image Processing App")
 
     # Check if model files exist
-    if model_files_exist():
-        st.success("Model files downloaded successfully.")
+    segmentation_model_path, detection_model_path = model_files_exist()
+
+    if segmentation_model_path is not None and detection_model_path is not None:
+        st.success("Model files loaded successfully.")
     else:
         if st.button("Download Model Files"):
             segmentation_model_path, detection_model_path = download_model_files()
-            if segmentation_model_path is not None and detection_model_path is not None:
-                st.success("Model files downloaded successfully.")
-            else:
-                st.error("Failed to download model files.")
-                # You can add additional handling here if needed
 
+    if segmentation_model_path is not None and detection_model_path is not None:
+        # Image upload or URL input
+        option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
+        image_path = None
 
-    # Image upload or URL input
-    option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
-    image_path = None
+        if option == 'Upload':
+            uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
+            if uploaded_file is not None:
+                # Open and convert the uploaded image to JPEG format
+                pil_image = Image.open(uploaded_file)
+                image_path = "temp_image.jpg"
+                pil_image.save(image_path, "JPEG")
+                st.image(pil_image, caption='Loaded Image', use_column_width=True)
 
-    if option == 'Upload':
-        uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-        if uploaded_file is not None:
-            # Open and convert the uploaded image to JPEG format
-            pil_image = Image.open(uploaded_file)
-            image_path = "temp_image.jpg"
-            pil_image.save(image_path, "JPEG")
-            st.image(pil_image, caption='Loaded Image', use_column_width=True)
-            print("Uploaded image saved successfully")
+        elif option == 'URL':
+            url = st.text_input("Enter the URL of the image")
+            if url:
+                image = load_image_from_url(url)
+                if image:
+                    image_path = "temp_image.png"
+                    image.save(image_path)
+                    st.image(image, caption='Loaded Image', use_column_width=True)
 
-    elif option == 'URL':
-        url = st.text_input("Enter the URL of the image")
-        if url:
-            image = load_image_from_url(url)
-            if image:
-                image_path = "temp_image.png"
-                image.save(image_path)
-                st.image(image, caption='Loaded Image', use_column_width=True)
-                print("Image from URL saved successfully")
+        if image_path is not None and st.button("Run Model"):
+            # Image Processing and Visualization
+            processed_image = None
+            if image_path:
+                # Load the YOLO model for object detection
+                st.write("Loading YOLO model...")
+                detection_model = YOLO(detection_model_path)
+                detection_results = detection_model.predict(source=image_path, conf=0.55)
 
-    if image_path is not None and st.button("Run Model"):
-        # Image Processing and Visualization
-        processed_image = None
-        if image_path:
-            processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
-
-            if isinstance(processed_image, np.ndarray):
-                processed_image = Image.fromarray(processed_image)
-
-            if processed_image is not None:
-                try:
-                    processed_image.save("debug_processed_image.png")
-                    st.image(processed_image, caption='Processed Image', use_column_width=True)
-                    print("Processed image saved successfully")
-                except Exception as e:
-                    st.error(f"An error occurred when displaying the image: {e}")
-                    print("Error when displaying processed image:", e)
+                # Rest of your code for processing and visualization...
+                # ...
 
 if __name__ == "__main__":
     main()
