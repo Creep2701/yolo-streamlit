@@ -182,10 +182,10 @@ import tempfile
 def main():
     st.title("YOLO Image Processing App")
 
-        # Initialize model paths
+    # Initialize model paths
     segmentation_model_path = None
     detection_model_path = None
-    
+
     # Check if model files exist
     if not model_files_exist():
         if st.button("Download Model Files"):
@@ -194,9 +194,6 @@ def main():
                 st.success("Model files downloaded successfully.")
             else:
                 st.error("Failed to download model files.")
-        else:
-            st.warning("Model files not downloaded yet. Click the button above to download.")
-            return  # Exit early if model files are not downloaded
 
     # Image upload or URL input
     option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
