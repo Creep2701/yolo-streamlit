@@ -186,8 +186,10 @@ def main():
     if model_files_exist():
         st.success("Model files downloaded successfully.")
     else:
-        st.warning("Model files not downloaded yet. Click the button below to download.")
-        #return  # Stop execution if model files are not downloaded
+        if st.button("Download Model Files"):
+            segmentation_model_path, detection_model_path = download_model_files()
+        else:
+            st.warning("Model files not downloaded yet. Click the button above to download.")
 
     # Button to download model files
     if not model_files_exist():
