@@ -115,30 +115,6 @@ import streamlit as st
 import requests
 from io import BytesIO
 
-# Your existing functions here
-# ...
-
-def load_image_from_url(url):
-    try:
-        # Send a GET request to the specified URL
-        response = requests.get(url)
-
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200:
-            # Open the image from the byte stream of the response content
-            image = Image.open(BytesIO(response.content))
-            return image  # Return the image object for further processing
-        else:
-            # Display an error message if the request was not successful
-            st.error("Failed to fetch the image. Status code: " + str(response.status_code))
-            return None
-
-    except Exception as e:
-        # Display an error message if an exception occurs (e.g., network issues, invalid URL)
-        st.error("An error occurred: " + str(e))
-        return None
-
-
 def save_uploaded_file(uploaded_file):
     try:
         with open(os.path.join("tempDir",uploaded_file.name),"wb") as f:
@@ -149,6 +125,7 @@ def save_uploaded_file(uploaded_file):
 
 # Configure logging to capture errors
 #logging.basicConfig(filename='app.log', level=logging.ERROR)
+
 
 # Function to download model files
 def download_model_files():
@@ -175,6 +152,27 @@ def download_model_files():
         return None, None
 
     return "best-segmentation-medium.pt", "best-detection-xlarge.pt"
+
+# Function to load an image from a URL
+def load_image_from_url(url):
+    try:
+        # Send a GET request to the specified URL
+        response = requests.get(url)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Open the image from the byte stream of the response content
+            image = Image.open(BytesIO(response.content))
+            return image  # Return the image object for further processing
+        else:
+            # Display an error message if the request was not successful
+            st.error("Failed to fetch the image. Status code: " + str(response.status_code))
+            return None
+
+    except Exception as e:
+        # Display an error message if an exception occurs (e.g., network issues, invalid URL)
+        st.error("An error occurred: " + str(e))
+        return None
 
 import tempfile
 def main():
