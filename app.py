@@ -171,6 +171,8 @@ def load_model_files():
 
     return segmentation_model_bytes, detection_model_bytes
 
+import tempfile
+
 def main():
     st.title("YOLO Image Processing App")
 
@@ -204,8 +206,15 @@ def main():
             # Image Processing and Visualization
             processed_image = None
             if image_path:
-                segmentation_model_path = segmentation_model_bytes
-                detection_model_path = detection_model_bytes
+                # Save model bytes to temporary files
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pt") as segmentation_tempfile:
+                    segmentation_tempfile.write(segmentation_model_bytes.read())
+                    segmentation_model_path = segmentation_tempfile.name
+                
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pt") as detection_tempfile:
+                    detection_tempfile.write(detection_model_bytes.read())
+                    detection_model_path = detection_tempfile.name
+
                 processed_image = preprocess_and_predict(image_path, detection_model_path, segmentation_model_path)
 
                 if isinstance(processed_image, np.ndarray):
