@@ -168,7 +168,15 @@ def assemble_model_file(parts_folder, original_filename):
 
 def main():
     st.title("YOLO Image Processing App")
-
+        # Display example image URLs
+    st.markdown("""
+    ### Some Example Image URLs:
+    - [Image 1](https://smb.ibsrv.net/imageresizer/image/article_manager/1200x1200/14623/843041/heroimage0.585829001666883203.jpg)
+    - [Image 2](https://www.drtuanpham.com/wp-content/uploads/2020/09/pano.jpg)
+    - [Image 3](https://millerhilldental.com/wp-content/uploads/2021/05/X-ray.png)
+    - [Image 4](https://dentalhealthtoday.com/wp-content/uploads/2723043.jpg) (no anomalies)
+    - [Image 5](https://smilesbybis.com/wp-content/uploads/2021/09/x-rays1.png)
+    """)
     parts_folder = 'split_files/'
     segmentation_model_path = assemble_model_file(parts_folder, 'best-segmentation-m.pt')
     detection_model_path = assemble_model_file(parts_folder, 'best-detection-xl.pt')
