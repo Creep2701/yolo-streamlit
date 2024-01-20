@@ -168,7 +168,7 @@ def assemble_model_file(parts_folder, original_filename):
 
 def main():
     st.title("YOLO Image Processing App")
-
+    st.markdown("This app uses YOLO to perform object detection and segmentation on an image. Here are some example images to try out:")
     # Create a row of columns for the example image URLs
     cols = st.columns(5)
     urls = [
