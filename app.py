@@ -149,24 +149,30 @@ def assemble_model_file(parts_folder, original_filename):
     temp_dir = tempfile.mkdtemp()
     assembled_file_path = os.path.join(temp_dir, original_filename)
 
+    st.write(f"Attempting to assemble {original_filename}...")  # Debug message
     with open(assembled_file_path, 'wb') as assembled_file:
         part_number = 1
         while True:
             part_filename = f"{os.path.join(parts_folder, original_filename)}.part{part_number}"
             if not os.path.exists(part_filename):
                 break
+            st.write(f"Adding {part_filename}...")  # Debug message
             with open(part_filename, 'rb') as part_file:
                 assembled_file.write(part_file.read())
             part_number += 1
 
+    if part_number == 1:
+        st.error("No parts found for assembly. Check the parts folder path.")
+        return None
+
+    st.write(f"Model {original_filename} assembled successfully.")
     return assembled_file_path
 
 
 def main():
     st.title("YOLO Image Processing App")
 
-    # Assemble the model files
-    parts_folder = 'path/to/model_parts'  # Update this path to where your model parts are stored
+    parts_folder = 'path/to/model_parts'  # Update this path
     segmentation_model_path = assemble_model_file(parts_folder, 'best-segmentation-m.pt')
     detection_model_path = assemble_model_file(parts_folder, 'best-detection-xl.pt')
 
