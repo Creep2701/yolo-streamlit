@@ -128,6 +128,10 @@ def save_uploaded_file(uploaded_file):
 
 
 # Function to download model files
+def model_files_exist():
+    return os.path.isfile("best-segmentation-medium.pt") and os.path.isfile("best-detection-xlarge.pt")
+
+# Function to download model files
 def download_model_files():
     # Define the Dropbox links for your model files
     segmentation_model_url = "https://www.dropbox.com/scl/fi/f3udyx6kh69pa7zfvtd3g/best-segmentation-medium.pt?rlkey=s1401c70wcj37oklp29khgxkl&dl=0"
@@ -178,12 +182,17 @@ import tempfile
 def main():
     st.title("YOLO Image Processing App")
 
-    # Download model files
-    segmentation_model_path, detection_model_path = download_model_files()
+    # Check if model files exist
+    if model_files_exist():
+        st.success("Model files downloaded successfully.")
+    else:
+        st.warning("Model files not downloaded yet. Click the button below to download.")
+        return  # Stop execution if model files are not downloaded
 
-    # Check if model files were downloaded successfully
-    if segmentation_model_path is not None and detection_model_path is not None:
-        print("Model files downloaded successfully")
+    # Button to download model files
+    if not model_files_exist():
+        if st.button("Download Model Files"):
+            segmentation_model_path, detection_model_path = download_model_files()
 
         # Image upload or URL input
         option = st.selectbox("How would you like to provide the image?", ['Upload', 'URL'])
