@@ -9,6 +9,7 @@ import streamlit as st
 import requests
 from io import BytesIO
 import os
+import tempfile
 
 
 def apply_elliptical_mask(image_path):
