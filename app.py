@@ -59,6 +59,7 @@ def perform_segmentation(segmentation_model_path, image_path):
 def preprocess_and_predict(image_path, detection_model_path, segmentation_model_path):
     try:
         # Perform segmentation and get the result image
+        st.write("Performing segmentation...")
         target_image = perform_segmentation(segmentation_model_path, image_path)
 
         # Convert PIL Image to NumPy array in RGB format
@@ -69,17 +70,19 @@ def preprocess_and_predict(image_path, detection_model_path, segmentation_model_
         target_image_np = cv2.cvtColor(target_image_np, cv2.COLOR_RGB2BGR)
 
         # Apply the elliptical mask to preprocess the image
+        st.write("Applying elliptical mask...")
         preprocessed_image = apply_elliptical_mask(image_path)
         preprocessed_image_path = 'temp_preprocessed.png'
         cv2.imwrite(preprocessed_image_path, preprocessed_image)
 
         # Load the YOLO model for object detection
+        st.write("Loading YOLO model...")
         detection_model = YOLO(detection_model_path)
         detection_results = detection_model.predict(source=preprocessed_image_path, conf=0.55)
 
         # Debugging: Print the shape and data type of the image
-        print("Target image shape:", target_image_np.shape)
-        print("Target image data type:", target_image_np.dtype)
+        st.write("Target image shape:", target_image_np.shape)
+        st.write("Target image data type:", target_image_np.dtype)
 
         # Draw bounding boxes on the target image
         for r in detection_results:
@@ -91,17 +94,18 @@ def preprocess_and_predict(image_path, detection_model_path, segmentation_model_
         # Convert back to RGB format for display
         final_image = cv2.cvtColor(target_image_np, cv2.COLOR_BGR2RGB)
         final_image = Image.fromarray(final_image)
-        
+
         # Display intermediate results for debugging
         st.image(target_image, caption='Segmented Image', use_column_width=True)
         st.image(Image.fromarray(preprocessed_image), caption='Preprocessed Image', use_column_width=True)
-        
+
         # Display the final processed image
         st.image(final_image, caption='Final Processed Image', use_column_width=True)
-        
+
     except Exception as e:
         # Handle any exceptions that may occur
-        print(f"An error occurred: {e}")
+        st.error(f"An error occurred: {e}")
+
 
 # Call preprocess_and_predict within your main function or as needed
 
