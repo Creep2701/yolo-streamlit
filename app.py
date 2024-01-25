@@ -104,16 +104,10 @@ def preprocess_and_predict(image_path, detection_model_path, segmentation_model_
         # Handle any exceptions that may occur
         print(f"An error occurred: {e}")
 
-# Call preprocess_and_predict within your main function or as needed
-
-   # final_image.save('final_result.jpg')
-
 import streamlit as st
 import requests
 from io import BytesIO
 
-# Your existing functions here
-# ...
 
 def load_image_from_url(url):
     try:
@@ -168,8 +162,16 @@ def assemble_model_file(parts_folder, original_filename):
 
 def main():
     st.title("YOLO Image Processing App")
-    st.markdown("This app uses YOLO to perform object detection and segmentation on an image. Here are some example images to try out:")
-    # Create a row of columns for the example image URLs
+    st.markdown("This app uses a YOLOv8 ensemble model to perform object detection and segmentation on dental xray images.")
+
+    st.markdown("""
+    ## How to Use the Model
+    1. **Choose an Image**: Select one of the sample images below or use your own by uploading it or providing a URL.
+    2. **Upload or Enter URL**: Use the uploader to upload your image or enter the URL of the image.
+    3. **Run the Model**: Click on the 'Run Model' button to process the image.
+    """)
+
+    st.markdown("Here are some example images to try out:")
     cols = st.columns(5)
     urls = [
         "https://smb.ibsrv.net/imageresizer/image/article_manager/1200x1200/14623/843041/heroimage0.585829001666883203.jpg",

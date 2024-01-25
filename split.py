@@ -1,4 +1,5 @@
 import os
+#This is a helper script to split the model weights into parts <50MB for uploading to GitHub
 
 def split_file(file_path, max_size=50*1024*1024, output_folder='split_files'):
     if not os.path.exists(output_folder):
