@@ -169,6 +169,9 @@ def main():
     1. **Choose an Image**: Select one of the sample images below or use your own by uploading it or providing a URL.
     2. **Upload or Enter URL**: Use the uploader to upload your image or enter the URL of the image.
     3. **Run the Model**: Click on the 'Run Model' button to process the image.
+                
+    **Note 1**: The model may take a few seconds to process the image. Please be patient.
+    **Note 2**: These images are taken from the web and are not training data.
     """)
 
     st.markdown("Here are some example images to try out:")
