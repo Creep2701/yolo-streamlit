@@ -229,10 +229,8 @@ def main():
         with col:
             st.image(url, width=150)
 
-    # Assign each URL to a column
-    for i, col in enumerate(cols):
-        with col:
-            st.markdown(f"[Image {i + 1}]({urls[i]})")
+
+
     parts_folder = "split_files/"
     segmentation_model_path = assemble_model_file(
         parts_folder, "best-segmentation-m.pt"
