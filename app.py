@@ -181,6 +181,10 @@ def main():
         "https://smilesbybis.com/wp-content/uploads/2021/09/x-rays1.png"
     ]
 
+    for i, url in enumerate(urls):
+        with cols[i % 5]:
+            st.image(url, width=150)  # Set the width as needed
+
     # Assign each URL to a column
     for i, col in enumerate(cols):
         with col:
