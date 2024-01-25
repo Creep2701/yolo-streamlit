@@ -171,6 +171,7 @@ def main():
     3. **Run the Model**: Click on the 'Run Model' button to process the image.
                 
     **Note 1**: The model may take a few seconds to process the image. Please be patient.
+    
     **Note 2**: These images are taken from the web and are not training data.
     """)
 
