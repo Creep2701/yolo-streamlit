@@ -213,10 +213,9 @@ def main():
     """
     )
 
-    st.markdown("Here are some example images to try out:"
+    st.markdown("""Here are some example images to try out: 
                 
-                
-                "**Note 2**: These images are taken from the web and are not training data.")
+                **Note 2**: These images are taken from the web and are not training data.""")
 
     urls = [
         "https://smb.ibsrv.net/imageresizer/image/article_manager/1200x1200/14623/843041/heroimage0.585829001666883203.jpg",
