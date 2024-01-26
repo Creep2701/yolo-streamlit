@@ -215,6 +215,7 @@ def main():
 
     st.markdown("Here are some example images to try out:"
                 
+                
                 "**Note 2**: These images are taken from the web and are not training data.")
 
     urls = [
