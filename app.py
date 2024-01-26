@@ -208,7 +208,7 @@ def main():
     2. **Upload or Enter URL**: Use the uploader to upload your image or enter the URL of the image.
     3. **Run the Model**: Click on the 'Run Model' button to process the image.
                 
-    **Note **: The model may take a few seconds to process the image. Please be patient.
+    **Note**: The model may take a few seconds to process the image. Please be patient.
 
     """
     )
